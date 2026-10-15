@@ -1,0 +1,39 @@
+{
+  "businessId": "biz_hvac_polar",
+  "businessName": "PolarAir HVAC Solutions",
+  "category": "HVAC Contractor",
+  "targetLocation": "Gulberg Lahore",
+  "phone": "+92-300-8881234",
+  "escalationPhone": "+92-300-9994321",
+  "website": "https://polarair.pk",
+  "neighborhoods": ["Main Boulevard Gulberg", "MM Alam Road", "Gulberg 3", "Jail Road"],
+  "targetKeywords": [
+    "HVAC repair in Gulberg",
+    "emergency AC compressor repair Lahore",
+    "inverter AC installation Gulberg",
+    "central duct cleaning service"
+  ],
+  "services": [
+    "Emergency Inverter AC Repair",
+    "Compressor Replacement",
+    "Central Heating & Cooling Maintenance",
+    "Commercial Duct Cleaning"
+  ],
+  "operatingHours": {
+    "Mon-Sun": "24/7 Emergency Dispatch"
+  },
+  "masterSchema": {
+    "businessName": "PolarAir HVAC Solutions",
+    "primaryCategory": "HVAC Contractor",
+    "secondaryCategories": ["Air Conditioning Repair Service", "Heating Contractor"],
+    "address": "Plaza 88, Main Boulevard Gulberg, Lahore, Pakistan",
+    "phone": "+92-300-8881234",
+    "website": "https://polarair.pk",
+    "regularHours": { "Mon-Sun": "24 Hours" },
+    "servicesList": [
+      "Emergency Inverter AC Repair",
+      "Compressor Replacement",
+      "Central Heating & Cooling Maintenance"
+    ]
+  }
+}

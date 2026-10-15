@@ -1,0 +1,23 @@
+{
+  "name": "haven-core-engine",
+  "version": "1.0.0",
+  "description": "Autonomous Google Business Profile (GBP), Local SEO, Reputation, and GEO Agent Engine",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "node --test tests/*.test.ts",
+    "start": "node src/cli.ts",
+    "demo": "node src/cli.ts demo",
+    "serve": "node -e 'import(\"./src/api/server.ts\").then(m => new m.HavenServer().listen(process.env.PORT || 3000).then(() => console.log(\"Haven Server running at http://localhost:\" + (process.env.PORT || 3000))))'"
+  },
+  "keywords": [
+    "gbp",
+    "local-seo",
+    "geo",
+    "reputation-management",
+    "ai-agent",
+    "zero-cost"
+  ],
+  "author": "Haven Team",
+  "license": "MIT"
+}

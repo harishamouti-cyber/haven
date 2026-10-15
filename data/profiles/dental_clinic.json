@@ -1,0 +1,42 @@
+{
+  "businessId": "biz_dental_apex",
+  "businessName": "Apex Dental Care",
+  "category": "Dental Clinic",
+  "targetLocation": "DHA Lahore",
+  "phone": "+92-300-1234567",
+  "escalationPhone": "+92-300-7654321",
+  "website": "https://apexdentalcare.pk",
+  "neighborhoods": ["DHA Phase 5", "Y-Block Commercial", "Broadway Phase 5"],
+  "targetKeywords": [
+    "emergency dentist in Lahore",
+    "root canal specialist DHA",
+    "teeth whitening clinic Lahore",
+    "pediatric dental care"
+  ],
+  "services": [
+    "Emergency Dental Pain Relief",
+    "Laser Teeth Whitening",
+    "Microscopic Root Canal Therapy",
+    "Invisalign & Clear Aligners",
+    "Dental Implants"
+  ],
+  "operatingHours": {
+    "Mon-Fri": "9:00 AM - 9:00 PM",
+    "Sat-Sun": "10:00 AM - 6:00 PM (Emergency On-Call)"
+  },
+  "masterSchema": {
+    "businessName": "Apex Dental Care",
+    "primaryCategory": "Dental Clinic",
+    "secondaryCategories": ["Cosmetic Dentist", "Emergency Dental Service"],
+    "address": "Building 14, Commercial Broadway, DHA Phase 5, Lahore, Pakistan",
+    "phone": "+92-300-1234567",
+    "website": "https://apexdentalcare.pk",
+    "regularHours": { "Mon-Fri": "9am-9pm", "Sat-Sun": "10am-6pm" },
+    "servicesList": [
+      "Emergency Dental Pain Relief",
+      "Laser Teeth Whitening",
+      "Microscopic Root Canal Therapy",
+      "Dental Implants"
+    ]
+  }
+}
