@@ -16,6 +16,7 @@ describe('AlertService', () => {
 
     assert.strictEqual(res.delivered, true);
     assert.strictEqual(res.channel, 'LOCAL_BUFFER');
+    assert.ok(res.channels.includes('LOCAL_BUFFER'));
 
     const history = alertService.getAlertHistory();
     assert.strictEqual(history.length, 1);
