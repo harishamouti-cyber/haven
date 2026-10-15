@@ -3,86 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Haven — Autonomous GBP, Local SEO & GEO Engine</title>
+  <title>Haven — Autonomous Local SEO & Reputation Engine</title>
   <style>
     :root {
       --bg: #090d16;
       --card-bg: #111827;
+      --card-inner: #162032;
       --border: #1f293d;
       --primary: #3b82f6;
+      --primary-hover: #2563eb;
       --accent: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
       --text: #f3f4f6;
       --text-muted: #9ca3af;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 24px; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; }
-    .logo-area h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-    .logo-badge { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    .cluster-status { display: flex; gap: 16px; align-items: center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    .logo-area h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px; }
+    .logo-badge { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .cluster-status { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .pill { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .pill.groq { background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.3); color: #fb923c; }
+    .pill.supabase { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
     .pill.cost { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: var(--primary); }
-    .pill-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; }
+    .pill-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+
+    /* Metrics Bar */
+    .metrics-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .metric-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+    .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .metric-value { font-size: 26px; font-weight: 800; color: #fff; display: flex; align-items: baseline; gap: 8px; }
+    .metric-sub { font-size: 12px; color: var(--accent); font-weight: 500; }
+
+    .controls { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { background: #243048; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #2d3b58; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #fca5a5; }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 24px; }
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-    .card-title { font-size: 16px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .card-title { font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
     .badge-auto { background: rgba(16, 185, 129, 0.15); color: var(--accent); border: 1px solid var(--accent); }
     .badge-review { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
 
-    .review-item { background: #162032; border-radius: 8px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
+    .review-item { background: var(--card-inner); border-radius: 8px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
     .review-item.complaint { border-left-color: var(--danger); }
     .review-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
     .stars { color: #fbbf24; font-weight: bold; }
     .review-text { font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
-    .reply-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 12.5px; border-left: 2px solid var(--primary); line-height: 1.45; }
-    .keyword-tag { display: inline-block; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-top: 6px; }
+    .reply-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; font-size: 12.5px; border-left: 2px solid var(--primary); line-height: 1.45; }
+    .keyword-tag { display: inline-block; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-top: 8px; font-weight: 600; }
 
-    .post-content { font-size: 13.5px; line-height: 1.6; color: #e2e8f0; margin-bottom: 14px; background: #162032; padding: 14px; border-radius: 8px; }
-    .post-stats { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); }
+    .post-content { font-size: 13.5px; line-height: 1.6; color: #e2e8f0; margin-bottom: 14px; background: var(--card-inner); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+    .post-stats { display: flex; gap: 14px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
 
-    .btn { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn:hover { opacity: 0.9; }
-    .btn-secondary { background: #243048; color: var(--text); }
-    .btn-danger { background: var(--danger); }
+    /* Interactive Review Form */
+    .interactive-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .interactive-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .form-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 12px; margin-bottom: 12px; }
+    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+    .input-field, .select-field { background: var(--card-inner); border: 1px solid var(--border); color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 13px; width: 100%; outline: none; }
+    .input-field:focus, .select-field:focus { border-color: var(--primary); }
 
     .terminal-card { background: #0b0f19; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .terminal-output { background: #050811; padding: 14px; border-radius: 6px; color: #38bdf8; font-size: 12px; line-height: 1.5; overflow-x: auto; max-height: 280px; }
-    .controls { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .terminal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .terminal-output { background: #050811; padding: 16px; border-radius: 6px; color: #38bdf8; font-size: 12.5px; line-height: 1.5; overflow-x: auto; max-height: 320px; border: 1px solid #162032; }
   </style>
 </head>
 <body>
+  <!-- Header -->
   <div class="header">
     <div class="logo-area">
-      <h1>HAVEN <span class="logo-badge">AGENT ENGINE</span></h1>
-      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Autonomous Google Business Profile, Local SEO & GEO Autopilot</p>
+      <h1>HAVEN <span class="logo-badge">Autonomous SaaS</span></h1>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Local SEO, Reputation Autopilot & Generative Engine Optimization Engine</p>
     </div>
     <div class="cluster-status">
-      <div class="pill"><span class="pill-dot"></span> Z.ai GLM-4.7-Flash</div>
-      <div class="pill"><span class="pill-dot"></span> Groq Model Rotation</div>
-      <div class="pill"><span class="pill-dot"></span> Mistral Small</div>
-      <div class="pill cost">💰 Budget: $0.00/mo</div>
+      <div class="pill groq"><span class="pill-dot"></span> Groq / Qwen 3.8 27B (Live)</div>
+      <div class="pill supabase"><span class="pill-dot"></span> Supabase ap-southeast-2 (Live)</div>
+      <div class="pill cost">💰 Infrastructure: $0.00/mo</div>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="btn" onclick="triggerSimulator('POS_REVIEW')">⚡ Simulate 5★ Review Event</button>
-    <button class="btn btn-danger" onclick="triggerSimulator('NEG_REVIEW')">🚨 Simulate 1★ Review Escalation</button>
-    <button class="btn btn-secondary" onclick="triggerSimulator('WEEKLY_POST')">📝 Simulate Weekly GBP Post</button>
-    <button class="btn btn-secondary" onclick="triggerSimulator('GEO_QNA')">🔍 Simulate AI Search (GEO) Q&A</button>
-    <button class="btn btn-secondary" onclick="triggerSimulator('MAP_AUDIT')">🛡️ Simulate Competitor Drift Audit</button>
+  <!-- Real-time Metrics Bar -->
+  <div class="metrics-bar">
+    <div class="metric-box">
+      <div class="metric-label">Total Executions</div>
+      <div class="metric-value" id="statTotal">--</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-label">Auto-Published (4-5★)</div>
+      <div class="metric-value" id="statAuto" style="color: var(--accent);">--</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-label">Escalations Held (1-3★)</div>
+      <div class="metric-value" id="statEscalations" style="color: var(--danger);">--</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-label">Owner Alerts Dispatched</div>
+      <div class="metric-value" id="statAlerts" style="color: var(--warning);">--</div>
+    </div>
   </div>
 
+  <!-- Interactive Test Console -->
+  <div class="interactive-card">
+    <div class="interactive-title">🧪 Live Interactive AI Playground (Type Any Review & Test Qwen 3.8)</div>
+    <div class="form-row">
+      <select id="userStars" class="select-field">
+        <option value="5">★★★★★ (5 Stars)</option>
+        <option value="4">★★★★☆ (4 Stars)</option>
+        <option value="3">★★★☆☆ (3 Stars - Held)</option>
+        <option value="2">★★☆☆☆ (2 Stars - Held)</option>
+        <option value="1">★☆☆☆☆ (1 Star - Held)</option>
+      </select>
+      <input id="userReviewText" class="input-field" placeholder="Enter review text (e.g., 'Amazing cleaning session today, Dr. Tariq was very thorough!')" value="Amazing dental cleaning today, Dr. Tariq was super friendly and professional!">
+      <button class="btn" onclick="submitCustomReview()">⚡ Generate Reply</button>
+    </div>
+    <div class="controls" style="margin-bottom: 0;">
+      <button class="btn btn-secondary" onclick="triggerSimulator('POS_REVIEW')">⭐ 5★ Review Preset</button>
+      <button class="btn btn-danger" onclick="triggerSimulator('NEG_REVIEW')">🚨 1★ Escalation Preset</button>
+      <button class="btn btn-secondary" onclick="triggerSimulator('WEEKLY_POST')">📅 Weekly GBP Post</button>
+      <button class="btn btn-secondary" onclick="triggerSimulator('GEO_QNA')">🤖 AI Search Q&A</button>
+      <button class="btn btn-secondary" onclick="triggerSimulator('MAP_AUDIT')">🛡️ Competitor Audit</button>
+    </div>
+  </div>
+
+  <!-- 4 Core Modules Display -->
   <div class="grid">
     <!-- Module A: Review Responder -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">⭐ Module A: Review Responder & SEO Engine</div>
-        <span class="badge badge-auto">Justification Active</span>
+        <div class="card-title">⭐ Module A: Review Responder & SEO</div>
+        <span class="badge badge-auto">Auto-Publish Active</span>
       </div>
       <div class="review-item">
         <div class="review-meta">
@@ -103,11 +163,11 @@
         </div>
         <div class="review-text">"Waited over 45 minutes past my scheduled appointment time."</div>
         <div class="reply-box">
-          <strong>Drafted Reply (Held for Approval):</strong> Dear Ayesha Malik, we sincerely apologize for your frustration. Please call us directly at +92-300-1234567 so management can address this immediately.
+          <strong>Drafted Reply (Escalated to Owner):</strong> Dear Ayesha Malik, we sincerely apologize for your frustration. Please call us directly at +92-300-1234567 so management can address this immediately.
         </div>
-        <div style="margin-top: 10px; display: flex; gap: 8px;">
-          <button class="btn btn-secondary" style="font-size: 11px;">Approve Reply</button>
-          <span class="badge badge-review">WhatsApp Alert Dispatched</span>
+        <div style="margin-top: 10px; display: flex; gap: 8px; align-items: center;">
+          <span class="badge badge-review">Alert Dispatched to Owner</span>
+          <span style="font-size: 11px; color: var(--text-muted);">safeToAutoPublish: false</span>
         </div>
       </div>
     </div>
@@ -119,62 +179,81 @@
         <span class="badge badge-auto">Weekly Cadence</span>
       </div>
       <div class="post-content">
-        Looking for dependable Emergency AC Compressor & Inverter Repair right here near Main Boulevard Gulberg? Our experienced local team is committed to providing prompt, professional, and transparent solutions for residents and businesses across the community. Whether you are facing an urgent issue or scheduling routine seasonal service, we arrive equipped with modern tools to get the job done right the first time. We take pride in our prompt response times and honest recommendations. Don't wait until minor issues become costly problems. Call +92-300-7654321 or visit polarair.pk to book your service or speak with our friendly team.
+        Looking for dependable Emergency Tooth Extraction & Whitening right here near Y-Block DHA Phase 3? Our experienced local team is committed to providing prompt, professional, and transparent solutions for residents and businesses across the community. Whether you are facing an urgent issue or scheduling routine seasonal service, we arrive equipped with modern tools to get the job done right the first time. We take pride in our prompt response times and honest recommendations. Don't wait until minor issues become costly problems. Call +92-300-1234567 or visit apexdentalcare.pk to book your service or speak with our friendly team.
       </div>
       <div class="post-stats">
-        <span>📏 <strong>Word Count:</strong> 91 words (Target: 80-120)</span>
-        <span>📍 <strong>Anchor:</strong> Main Boulevard Gulberg</span>
+        <span>📏 <strong>Length:</strong> 96 words (Target: 80–120)</span>
+        <span>📍 <strong>Anchor:</strong> Y-Block DHA Phase 3</span>
       </div>
     </div>
 
     <!-- Module C: AI Search (GEO) -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">🤖 Module C: Generative Engine Optimization (GEO)</div>
+        <div class="card-title">🤖 Module C: AI Search (GEO) & Q&A</div>
         <span class="badge badge-auto">ChatGPT & Perplexity</span>
       </div>
-      <div style="background: #162032; padding: 14px; border-radius: 8px; margin-bottom: 12px;">
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">CUSTOMER INQUIRY / Q&A SEEDING</div>
-        <div style="font-weight: 600; font-size: 13.5px; margin-bottom: 8px;">"Do you offer same-day emergency dental appointments on weekends?"</div>
+      <div style="background: var(--card-inner); padding: 14px; border-radius: 8px; margin-bottom: 12px;">
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">Customer Search Inquiry</div>
+        <div style="font-weight: 600; font-size: 13.5px; margin-bottom: 8px; color: #fff;">"Do you offer same-day emergency dental appointments on weekends?"</div>
         <div style="font-size: 13px; line-height: 1.5; color: #93c5fd;">
           "Yes, we provide dedicated same-day emergency appointments on weekends. Our on-call clinical team is available Saturday and Sunday between 10:00 AM and 8:00 PM at our central facility to treat urgent cases promptly."
         </div>
       </div>
       <div style="font-size: 12px; color: var(--text-muted);">
-        ✔ Structured entity format: Clear service availability, exact hours, and zero fluff.
+        ✔ Structured entity format: Clear availability, exact hours, zero marketing fluff.
       </div>
     </div>
 
     <!-- Module D: Profile Guard & Competitor Spy -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">🛡️ Module D: Profile Guard & Competitor Spy</div>
-        <span class="badge badge-review">1 Drift Detected</span>
+        <div class="card-title">🛡️ Module D: Profile Guard & Spy</div>
+        <span class="badge badge-review">1 Drift Caught</span>
       </div>
-      <div style="background: #162032; padding: 14px; border-radius: 8px; margin-bottom: 12px;">
-        <div style="font-size: 12px; color: var(--danger); font-weight: 600; margin-bottom: 6px;">⚠️ UNAUTHORIZED LIVE EDIT BLOCKED</div>
+      <div style="background: var(--card-inner); padding: 14px; border-radius: 8px; margin-bottom: 12px;">
+        <div style="font-size: 12px; color: var(--danger); font-weight: 700; margin-bottom: 6px;">⚠️ UNAUTHORIZED LIVE EDIT BLOCKED</div>
         <div style="font-size: 12.5px; line-height: 1.4;">
-          <strong>Phone Drift:</strong> Master is <code>+92-300-1234567</code>. Live edit attempted <code>+92-300-9999999</code>. Reverted to master record.
+          <strong>Phone Drift Detected:</strong> Master record is <code>+92-300-1234567</code>. Third-party edit attempted <code>+92-300-9999999</code>. Auto-reverted to master record.
         </div>
       </div>
       <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
         <strong>Competitor Map Velocity:</strong><br>
         • DHA Smile Studio: 142 reviews (+6 this week)<br>
         • Lahore Dental Associates: 88 reviews (+1 this week)<br>
-        <em>Recommendation: Increase SMS review outreach to maintain 3-pack rank.</em>
+        <em>Recommendation: Dispatch review request SMS campaign.</em>
       </div>
     </div>
   </div>
 
+  <!-- Live Output Terminal -->
   <div class="terminal-card">
-    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 10px;">⚡ Live Execution JSON Output Terminal</div>
-    <pre id="jsonOutput" class="terminal-output">// Click any button above to test real-time event dispatching...</pre>
+    <div class="terminal-header">
+      <div style="font-size: 13px; font-weight: 700; color: #fff;">⚡ Live AI Response & Schema Compliance Inspector</div>
+      <span style="font-size: 11px; color: var(--text-muted);">Output strictly follows Haven JSON contract</span>
+    </div>
+    <pre id="jsonOutput" class="terminal-output">// Select any preset button or submit a custom review to see live output generated by Qwen 3.8...</pre>
   </div>
 
   <script>
+    async function loadMetrics() {
+      try {
+        const res = await fetch('/api/metrics');
+        if (res.ok) {
+          const m = await res.json();
+          document.getElementById('statTotal').innerText = m.totalExecutions ?? 0;
+          document.getElementById('statAuto').innerText = m.autoPublished ?? 0;
+          document.getElementById('statEscalations').innerText = m.escalations ?? 0;
+          document.getElementById('statAlerts').innerText = m.alertsDispatched ?? 0;
+        }
+      } catch (e) {
+        console.warn('Metrics fetch error:', e);
+      }
+    }
+
     async function triggerSimulator(action) {
       const output = document.getElementById('jsonOutput');
-      output.innerText = "Dispatching event through Haven multi-provider router...";
+      output.innerText = "⏳ Dispatching event to Groq AI (Qwen 3.8)...";
       try {
         const res = await fetch('/api/events/simulate', {
           method: 'POST',
@@ -183,17 +262,48 @@
         });
         const data = await res.json();
         output.innerText = JSON.stringify(data, null, 2);
+        loadMetrics();
       } catch (err) {
-        output.innerText = "// Offline preview mode:\n" + JSON.stringify({
-          actionType: action === 'POS_REVIEW' ? 'REVIEW_REPLY' : action === 'WEEKLY_POST' ? 'GBP_POST' : 'COMPETITOR_AUDIT',
-          contentOutput: "Event executed successfully via Haven zero-cost cluster.",
-          sentimentCategory: action === 'POS_REVIEW' ? 'POSITIVE' : 'NEUTRAL',
-          safeToAutoPublish: action !== 'NEG_REVIEW',
-          seoKeywordInjected: action === 'POS_REVIEW' ? 'emergency dentist in Lahore' : null,
-          ownerAlertSummary: action === 'NEG_REVIEW' ? 'Urgent 1-star escalation held for owner review.' : null
-        }, null, 2);
+        output.innerText = "Error contacting server: " + err.message;
       }
     }
+
+    async function submitCustomReview() {
+      const output = document.getElementById('jsonOutput');
+      const stars = parseInt(document.getElementById('userStars').value, 10);
+      const text = document.getElementById('userReviewText').value.trim();
+      if (!text) return alert('Please enter review text.');
+
+      output.innerText = `⏳ Sending ${stars}-Star review to Haven AI Engine (Qwen 3.8)...`;
+      try {
+        const res = await fetch('/api/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: `evt_${Date.now()}`,
+            eventType: 'REVIEW_EVENT',
+            businessId: '5345f669-77bb-4c2d-8453-56248b28322e',
+            businessName: 'Apex Dental Care',
+            businessCategory: 'Dental Clinic',
+            targetLocation: 'DHA Lahore',
+            timestamp: new Date().toISOString(),
+            reviewerName: 'Interactive Visitor',
+            starRating: stars,
+            reviewText: text,
+            targetKeywords: ['emergency dentist in Lahore']
+          })
+        });
+        const data = await res.json();
+        output.innerText = JSON.stringify(data, null, 2);
+        loadMetrics();
+      } catch (err) {
+        output.innerText = "Error: " + err.message;
+      }
+    }
+
+    // Initial load
+    loadMetrics();
+    setInterval(loadMetrics, 5000);
   </script>
 </body>
 </html>
