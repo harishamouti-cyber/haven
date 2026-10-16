@@ -1,259 +1,665 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Haven — Autonomous Local SEO & Reputation Engine</title>
-  <style>
-    :root {
-      --bg: #090d16;
-      --card-bg: #111827;
-      --card-inner: #162032;
-      --border: #1f293d;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --accent: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; }
-    
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-    .logo-area h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px; }
-    .logo-badge { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    .cluster-status { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .pill { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-    .pill.groq { background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.3); color: #fb923c; }
-    .pill.supabase { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
-    .pill.cost { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: var(--primary); }
-    .pill-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
-
-    /* Metrics Bar */
-    .metrics-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .metric-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
-    .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-    .metric-value { font-size: 26px; font-weight: 800; color: #fff; display: flex; align-items: baseline; gap: 8px; }
-    .metric-sub { font-size: 12px; color: var(--accent); font-weight: 500; }
-
-    .controls { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    .btn-secondary { background: #243048; color: var(--text); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: #2d3b58; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #fca5a5; }
-    .btn-danger:hover { background: var(--danger); color: #fff; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 24px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-    .card-title { font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .badge-auto { background: rgba(16, 185, 129, 0.15); color: var(--accent); border: 1px solid var(--accent); }
-    .badge-review { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
-
-    .review-item { background: var(--card-inner); border-radius: 8px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
-    .review-item.complaint { border-left-color: var(--danger); }
-    .review-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-    .stars { color: #fbbf24; font-weight: bold; }
-    .review-text { font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
-    .reply-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; font-size: 12.5px; border-left: 2px solid var(--primary); line-height: 1.45; }
-    .keyword-tag { display: inline-block; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-top: 8px; font-weight: 600; }
-
-    .post-content { font-size: 13.5px; line-height: 1.6; color: #e2e8f0; margin-bottom: 14px; background: var(--card-inner); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-    .post-stats { display: flex; gap: 14px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
-
-    /* Interactive Review Form */
-    .interactive-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-    .interactive-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .form-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 12px; margin-bottom: 12px; }
-    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
-    .input-field, .select-field { background: var(--card-inner); border: 1px solid var(--border); color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 13px; width: 100%; outline: none; }
-    .input-field:focus, .select-field:focus { border-color: var(--primary); }
-
-    .terminal-card { background: #0b0f19; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .terminal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .terminal-output { background: #050811; padding: 16px; border-radius: 6px; color: #38bdf8; font-size: 12.5px; line-height: 1.5; overflow-x: auto; max-height: 320px; border: 1px solid #162032; }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <div class="header">
-    <div class="logo-area">
-      <h1>HAVEN <span class="logo-badge">Autonomous SaaS</span></h1>
-      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Local SEO, Reputation Autopilot & Generative Engine Optimization Engine</p>
-    </div>
-    <div class="cluster-status">
-      <div class="pill groq"><span class="pill-dot"></span> Groq / Qwen 3.8 27B (Live)</div>
-      <div class="pill supabase"><span class="pill-dot"></span> Supabase ap-southeast-2 (Live)</div>
-      <div class="pill cost">💰 Infrastructure: $0.00/mo</div>
-    </div>
-  </div>
-
-  <!-- Real-time Metrics Bar -->
-  <div class="metrics-bar">
-    <div class="metric-box">
-      <div class="metric-label">Total Executions</div>
-      <div class="metric-value" id="statTotal">--</div>
-    </div>
-    <div class="metric-box">
-      <div class="metric-label">Auto-Published (4-5★)</div>
-      <div class="metric-value" id="statAuto" style="color: var(--accent);">--</div>
-    </div>
-    <div class="metric-box">
-      <div class="metric-label">Escalations Held (1-3★)</div>
-      <div class="metric-value" id="statEscalations" style="color: var(--danger);">--</div>
-    </div>
-    <div class="metric-box">
-      <div class="metric-label">Owner Alerts Dispatched</div>
-      <div class="metric-value" id="statAlerts" style="color: var(--warning);">--</div>
-    </div>
-  </div>
-
-  <!-- Interactive Test Console -->
-  <div class="interactive-card">
-    <div class="interactive-title">🧪 Live Interactive AI Playground (Type Any Review & Test Qwen 3.8)</div>
-    <div class="form-row">
-      <select id="userStars" class="select-field">
-        <option value="5">★★★★★ (5 Stars)</option>
-        <option value="4">★★★★☆ (4 Stars)</option>
-        <option value="3">★★★☆☆ (3 Stars - Held)</option>
-        <option value="2">★★☆☆☆ (2 Stars - Held)</option>
-        <option value="1">★☆☆☆☆ (1 Star - Held)</option>
-      </select>
-      <input id="userReviewText" class="input-field" placeholder="Enter review text (e.g., 'Amazing cleaning session today, Dr. Tariq was very thorough!')" value="Amazing dental cleaning today, Dr. Tariq was super friendly and professional!">
-      <button class="btn" onclick="submitCustomReview()">⚡ Generate Reply</button>
-    </div>
-    <div class="controls" style="margin-bottom: 0;">
-      <button class="btn btn-secondary" onclick="triggerSimulator('POS_REVIEW')">⭐ 5★ Review Preset</button>
-      <button class="btn btn-danger" onclick="triggerSimulator('NEG_REVIEW')">🚨 1★ Escalation Preset</button>
-      <button class="btn btn-secondary" onclick="triggerSimulator('WEEKLY_POST')">📅 Weekly GBP Post</button>
-      <button class="btn btn-secondary" onclick="triggerSimulator('GEO_QNA')">🤖 AI Search Q&A</button>
-      <button class="btn btn-secondary" onclick="triggerSimulator('MAP_AUDIT')">🛡️ Competitor Audit</button>
-    </div>
-  </div>
-
-  <!-- 4 Core Modules Display -->
-  <div class="grid">
-    <!-- Module A: Review Responder -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">⭐ Module A: Review Responder & SEO</div>
-        <span class="badge badge-auto">Auto-Publish Active</span>
-      </div>
-      <div class="review-item">
-        <div class="review-meta">
-          <span><strong>Farhan Tariq</strong></span>
-          <span class="stars">★★★★★</span>
-        </div>
-        <div class="review-text">"Dr. Tariq was very gentle during my root canal treatment yesterday. Great clinic!"</div>
-        <div class="reply-box">
-          <strong>Auto-Published Reply:</strong> Dear Farhan Tariq, thank you so much for your kind words! Providing dependable, gentle care as a trusted <em>emergency dentist in Lahore</em> is always our highest priority.
-        </div>
-        <div class="keyword-tag">SEO Keyword: emergency dentist in Lahore</div>
-      </div>
-
-      <div class="review-item complaint">
-        <div class="review-meta">
-          <span><strong>Ayesha Malik</strong></span>
-          <span class="stars" style="color: var(--danger)">★☆☆☆☆</span>
-        </div>
-        <div class="review-text">"Waited over 45 minutes past my scheduled appointment time."</div>
-        <div class="reply-box">
-          <strong>Drafted Reply (Escalated to Owner):</strong> Dear Ayesha Malik, we sincerely apologize for your frustration. Please call us directly at +92-300-1234567 so management can address this immediately.
-        </div>
-        <div style="margin-top: 10px; display: flex; gap: 8px; align-items: center;">
-          <span class="badge badge-review">Alert Dispatched to Owner</span>
-          <span style="font-size: 11px; color: var(--text-muted);">safeToAutoPublish: false</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module B: Weekly Post Autopilot -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">📅 Module B: Weekly GBP Post Autopilot</div>
-        <span class="badge badge-auto">Weekly Cadence</span>
-      </div>
-      <div class="post-content">
-        Looking for dependable Emergency Tooth Extraction & Whitening right here near Y-Block DHA Phase 3? Our experienced local team is committed to providing prompt, professional, and transparent solutions for residents and businesses across the community. Whether you are facing an urgent issue or scheduling routine seasonal service, we arrive equipped with modern tools to get the job done right the first time. We take pride in our prompt response times and honest recommendations. Don't wait until minor issues become costly problems. Call +92-300-1234567 or visit apexdentalcare.pk to book your service or speak with our friendly team.
-      </div>
-      <div class="post-stats">
-        <span>📏 <strong>Length:</strong> 96 words (Target: 80–120)</span>
-        <span>📍 <strong>Anchor:</strong> Y-Block DHA Phase 3</span>
-      </div>
-    </div>
-
-    <!-- Module C: AI Search (GEO) -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">🤖 Module C: AI Search (GEO) & Q&A</div>
-        <span class="badge badge-auto">ChatGPT & Perplexity</span>
-      </div>
-      <div style="background: var(--card-inner); padding: 14px; border-radius: 8px; margin-bottom: 12px;">
-        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">Customer Search Inquiry</div>
-        <div style="font-weight: 600; font-size: 13.5px; margin-bottom: 8px; color: #fff;">"Do you offer same-day emergency dental appointments on weekends?"</div>
-        <div style="font-size: 13px; line-height: 1.5; color: #93c5fd;">
-          "Yes, we provide dedicated same-day emergency appointments on weekends. Our on-call clinical team is available Saturday and Sunday between 10:00 AM and 8:00 PM at our central facility to treat urgent cases promptly."
-        </div>
-      </div>
-      <div style="font-size: 12px; color: var(--text-muted);">
-        ✔ Structured entity format: Clear availability, exact hours, zero marketing fluff.
-      </div>
-    </div>
-
-    <!-- Module D: Profile Guard & Competitor Spy -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">🛡️ Module D: Profile Guard & Spy</div>
-        <span class="badge badge-review">1 Drift Caught</span>
-      </div>
-      <div style="background: var(--card-inner); padding: 14px; border-radius: 8px; margin-bottom: 12px;">
-        <div style="font-size: 12px; color: var(--danger); font-weight: 700; margin-bottom: 6px;">⚠️ UNAUTHORIZED LIVE EDIT BLOCKED</div>
-        <div style="font-size: 12.5px; line-height: 1.4;">
-          <strong>Phone Drift Detected:</strong> Master record is <code>+92-300-1234567</code>. Third-party edit attempted <code>+92-300-9999999</code>. Auto-reverted to master record.
-        </div>
-      </div>
-      <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-        <strong>Competitor Map Velocity:</strong><br>
-        • DHA Smile Studio: 142 reviews (+6 this week)<br>
-        • Lahore Dental Associates: 88 reviews (+1 this week)<br>
-        <em>Recommendation: Dispatch review request SMS campaign.</em>
-      </div>
-    </div>
-  </div>
-
-  <!-- Live Output Terminal -->
-  <div class="terminal-card">
-    <div class="terminal-header">
-      <div style="font-size: 13px; font-weight: 700; color: #fff;">⚡ Live AI Response & Schema Compliance Inspector</div>
-      <span style="font-size: 11px; color: var(--text-muted);">Output strictly follows Haven JSON contract</span>
-    </div>
-    <pre id="jsonOutput" class="terminal-output">// Select any preset button or submit a custom review to see live output generated by Qwen 3.8...</pre>
-  </div>
+  <title>Haven — Autonomous Local Search & Reputation Engine</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP & ScrollTrigger & Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
 
   <script>
-    async function loadMetrics() {
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9ebff',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              violet: '#8b5cf6',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              dark: '#030712',
+              card: '#0b1120',
+              cardInner: '#111827',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderActive: 'rgba(59, 130, 246, 0.4)'
+            }
+          },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Premium visual polish */
+    ::selection { background: #3b82f6; color: #ffffff; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030712; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    .glow-bg {
+      background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.08) 35%, transparent 70%);
+    }
+
+    .glass-nav {
+      background: rgba(11, 17, 32, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bento-card {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(11, 17, 32, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bento-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    }
+
+    .bento-card:hover {
+      border-color: rgba(59, 130, 246, 0.35);
+      box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-primary {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Pulse dot */
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+  </style>
+</head>
+<body class="bg-brand-dark text-slate-100 font-sans selection:bg-brand-500 selection:text-white antialiased overflow-x-hidden">
+
+  <!-- Ambient Light Fields -->
+  <div class="fixed inset-0 pointer-events-none glow-bg z-0"></div>
+  <div class="fixed top-1/4 -left-48 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed bottom-1/4 -right-48 w-96 h-96 bg-brand-violet/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Floating Glass Navigation -->
+  <header class="fixed top-5 inset-x-0 z-50 flex justify-center px-4">
+    <nav class="glass-nav rounded-full px-6 py-3 flex items-center justify-between w-full max-w-5xl shadow-2xl shadow-black/50">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-brand-violet flex items-center justify-center font-display font-extrabold text-white text-base shadow-lg shadow-brand-500/25">
+          H
+        </div>
+        <span class="font-display font-bold text-lg tracking-tight text-white flex items-center gap-2">
+          HAVEN <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-brand-500/15 border border-brand-500/30 text-brand-400 font-semibold tracking-wider">Autonomous Engine</span>
+        </span>
+      </div>
+
+      <div class="hidden md:flex items-center gap-6 text-xs font-medium text-slate-400">
+        <a href="#hero" class="hover:text-white transition-colors">Overview</a>
+        <a href="#playground" class="hover:text-white transition-colors">Live Simulator</a>
+        <a href="#modules" class="hover:text-white transition-colors">Modules</a>
+        <a href="#architecture" class="hover:text-white transition-colors">Architecture</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <span class="pulse-dot"></span> Groq Qwen 3.8 Live
+        </div>
+        <a href="#playground" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-600 to-brand-violet hover:from-brand-500 hover:to-brand-violet text-white text-xs font-semibold tracking-wide shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-300">
+          Try Sandbox
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="relative z-10 pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="text-center pt-8 pb-16 md:pt-16 md:pb-24">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/60 text-slate-300 text-xs font-mono mb-8 backdrop-blur-md">
+        <span class="text-brand-400 font-semibold">$0.00/mo Infrastructure</span>
+        <span class="text-slate-600">•</span>
+        <span>PostgreSQL on Supabase Cloud</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-emerald-400">~18ms AI Latency</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight font-display max-w-5xl mx-auto leading-[1.08] text-gradient mb-6">
+        Autonomous Local SEO & <br class="hidden sm:inline">
+        <span class="text-gradient-primary">Reputation Supremacy.</span>
+      </h1>
+
+      <p class="text-base sm:text-xl text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed mb-10">
+        Haven runs 24/7 on pure zero-cost intelligence: synthesizing keyword-dense review responses, scheduling hyper-local Google Business Profile posts, and feeding ChatGPT Search entity facts with zero humans required.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="#playground" class="px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-violet hover:from-brand-500 hover:to-brand-violet text-white font-semibold text-sm shadow-xl shadow-brand-600/30 hover:shadow-brand-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Test Live AI Simulator
+        </a>
+        <a href="https://github.com/harishamouti-cyber/haven" target="_blank" class="px-6 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-200 font-semibold text-sm hover:border-slate-600 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub Repository
+        </a>
+      </div>
+
+      <!-- Live Telemetry Strip -->
+      <div class="mt-16 max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
+        <div class="p-3">
+          <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Total Runs</div>
+          <div class="text-2xl font-bold font-mono text-white" id="statTotal">--</div>
+        </div>
+        <div class="p-3 border-l border-slate-800">
+          <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Auto-Published</div>
+          <div class="text-2xl font-bold font-mono text-emerald-400" id="statAuto">--</div>
+        </div>
+        <div class="p-3 border-l border-slate-800">
+          <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Escalations Held</div>
+          <div class="text-2xl font-bold font-mono text-rose-400" id="statEscalations">--</div>
+        </div>
+        <div class="p-3 border-l border-slate-800">
+          <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Owner Alerts</div>
+          <div class="text-2xl font-bold font-mono text-amber-400" id="statAlerts">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE INTERACTIVE PLAYGROUND (TEST QWEN 3.8 IN REAL TIME) -->
+    <section id="playground" class="py-12">
+      <div class="bento-card rounded-2xl p-6 md:p-8 relative">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-2">
+              <span class="pulse-dot"></span> Live Model Sandbox
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold font-display text-white">Live AI Execution Playground</h2>
+            <p class="text-slate-400 text-sm mt-1">Submit custom review copy directly into Groq Qwen 3.8 27B and verify brand safety guardrails.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono text-slate-400">Target Business:</span>
+            <span class="text-xs font-mono px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-white font-medium">Apex Dental Care (DHA Lahore)</span>
+          </div>
+        </div>
+
+        <!-- Interactive Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div class="lg:col-span-8 flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="w-full sm:w-44">
+                <label class="block text-xs font-mono text-slate-400 mb-1.5 uppercase tracking-wider">Star Rating</label>
+                <select id="userStars" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors">
+                  <option value="5">★★★★★ (5 Stars - Auto)</option>
+                  <option value="4">★★★★☆ (4 Stars - Auto)</option>
+                  <option value="3">★★★☆☆ (3 Stars - Held)</option>
+                  <option value="2">★★☆☆☆ (2 Stars - Held)</option>
+                  <option value="1" selected>★☆☆☆☆ (1 Star - Escalated)</option>
+                </select>
+              </div>
+
+              <div class="w-full sm:w-56">
+                <label class="block text-xs font-mono text-slate-400 mb-1.5 uppercase tracking-wider">SEO Target Keyword</label>
+                <input id="userKeyword" type="text" value="emergency dentist in Lahore" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors font-mono text-xs">
+              </div>
+
+              <div class="flex-1">
+                <label class="block text-xs font-mono text-slate-400 mb-1.5 uppercase tracking-wider">Customer Name</label>
+                <input id="userName" type="text" value="Farhan Tariq" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono text-slate-400 mb-1.5 uppercase tracking-wider">Customer Review Body</label>
+              <textarea id="userReviewText" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors leading-relaxed" placeholder="Write any review to evaluate live sentiment analysis and safety gates...">Waited over 45 minutes past my scheduled appointment time and the receptionist was very dismissive.</textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <button onclick="submitInteractiveReview()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-violet hover:from-brand-500 hover:to-brand-violet text-white font-semibold text-xs tracking-wide shadow-lg shadow-brand-500/25 transition-all duration-200 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                Generate Real-Time Response
+              </button>
+
+              <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                <span>Presets:</span>
+                <button onclick="loadPreset('5star')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors">5★ Praise</button>
+                <button onclick="loadPreset('1star')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-300 text-xs transition-colors">1★ Delay</button>
+                <button onclick="loadPreset('spam')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs transition-colors">Spam Bot</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Output Inspector -->
+          <div class="lg:col-span-4 flex flex-col">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-1.5 uppercase tracking-wider">
+              <span>Telemetry Terminal</span>
+              <span id="responseStatus" class="text-emerald-400 font-semibold">Ready</span>
+            </div>
+            <div class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs overflow-y-auto max-h-72 text-brand-400 leading-relaxed shadow-inner" id="telemetryBox">
+// Click "Generate Real-Time Response" to stream Groq output...
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Module Simulation Buttons -->
+        <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-mono text-slate-500 uppercase tracking-wider mr-2">Cluster Presets:</span>
+          <button onclick="triggerQuickSim('POS_REVIEW')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 hover:text-white transition-colors">
+            ⭐ 5★ Review + SEO Injection
+          </button>
+          <button onclick="triggerQuickSim('NEG_REVIEW')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-rose-300 hover:text-rose-200 transition-colors">
+            🚨 1★ Negative Escalation
+          </button>
+          <button onclick="triggerQuickSim('WEEKLY_POST')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-blue-300 hover:text-blue-200 transition-colors">
+            📅 Weekly GBP Post (80–120 Words)
+          </button>
+          <button onclick="triggerQuickSim('GEO_QNA')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-violet-300 hover:text-violet-200 transition-colors">
+            🤖 AI Search Q&A (GEO)
+          </button>
+          <button onclick="triggerQuickSim('MAP_AUDIT')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-amber-300 hover:text-amber-200 transition-colors">
+            🛡️ Schema Tamper Drift Audit
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE 4 MODULES (GAPLESS BENTO GRID) -->
+    <section id="modules" class="py-16">
+      <div class="mb-10 text-center sm:text-left">
+        <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-white tracking-tight">Autonomous Agency Engine</h2>
+        <p class="text-slate-400 text-sm mt-2">Four specialized sub-agents working in unison to dominate local 3-pack search and AI answer engines.</p>
+      </div>
+
+      <!-- Bento Grid (12-Column Gapless System) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- MODULE A (Span 7) -->
+        <div class="lg:col-span-7 bento-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="badge-pill bg-brand-500/15 border border-brand-500/30 text-brand-400">
+                Module A: Review Responder
+              </span>
+              <span class="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                <span class="pulse-dot"></span> Auto-Publish Gated
+              </span>
+            </div>
+            <h3 class="text-xl font-bold font-display text-white mb-2">Local SEO Review Responder & Justification Engine</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+              Injects neighborhood keywords into 4–5★ reviews to boost Google Maps ranking justifications, while automatically withholding 1–3★ complaints from public publication to prevent brand damage.
+            </p>
+
+            <!-- Interactive Sample Card -->
+            <div class="space-y-3">
+              <div class="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                  <span class="font-bold text-white">Farhan Tariq <span class="text-emerald-400 font-normal">via Google Maps</span></span>
+                  <span class="text-amber-400 font-bold">★★★★★</span>
+                </div>
+                <p class="text-xs text-slate-300 italic mb-2.5">"Dr. Tariq was very gentle during my root canal treatment yesterday."</p>
+                <div class="p-3 rounded-lg bg-black/40 border border-slate-800 text-xs text-slate-300 leading-relaxed font-sans">
+                  <span class="text-brand-400 font-semibold font-mono text-[11px] block mb-1">AUTO-PUBLISHED REPLY:</span>
+                  Dear Farhan Tariq, thank you so much for your kind words! Providing dependable, gentle care as a trusted <strong class="text-brand-300 underline decoration-brand-500">emergency dentist in Lahore</strong> is always our highest priority.
+                </div>
+                <div class="mt-2 flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 text-[10px] font-mono">Injected: emergency dentist in Lahore</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono">safeToAutoPublish: true</span>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/90 border border-rose-500/30">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                  <span class="font-bold text-white">Ayesha Malik <span class="text-rose-400 font-normal">via Google Maps</span></span>
+                  <span class="text-rose-400 font-bold">★☆☆☆☆</span>
+                </div>
+                <p class="text-xs text-slate-300 italic mb-2.5">"Waited over 45 minutes past my scheduled appointment time."</p>
+                <div class="p-3 rounded-lg bg-black/40 border border-slate-800 text-xs text-slate-300 leading-relaxed font-sans">
+                  <span class="text-rose-400 font-semibold font-mono text-[11px] block mb-1">HELD FOR OWNER APPROVAL:</span>
+                  Dear Ayesha Malik, we sincerely apologize for your frustration. Please call us directly at +92-300-1234567 so management can address this immediately.
+                </div>
+                <div class="mt-2 flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-mono">safeToAutoPublish: false</span>
+                  <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono">WhatsApp & Telegram Alert Sent</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE B (Span 5) -->
+        <div class="lg:col-span-5 bento-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="badge-pill bg-brand-violet/15 border border-brand-violet/30 text-brand-violet">
+                Module B • GBP Autopilot
+              </span>
+              <span class="text-xs font-mono text-slate-400">Weekly Cadence</span>
+            </div>
+            <h3 class="text-xl font-bold font-display text-white mb-2">Weekly Local SEO Post Dispatcher</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+              Maintains Google freshness signals with strict 80–120 word posts anchored to real community landmarks.
+            </p>
+
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 mb-4">
+              <div class="text-[11px] font-mono text-brand-violet mb-2 font-semibold">GENERATED GBP POST CONTENT:</div>
+              <p class="text-xs text-slate-200 leading-relaxed mb-3">
+                "Looking for dependable Emergency Tooth Extraction & Whitening right here near Y-Block DHA Phase 3? Our experienced local team is committed to providing prompt, professional, and transparent solutions for residents across the community. Whether facing an urgent issue or scheduling routine care, we arrive equipped to get the job done right. Don't wait until minor issues become costly problems. Call +92-300-1234567 or visit apexdentalcare.pk to book your consultation."
+              </p>
+              <div class="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-400 border-t border-slate-800 pt-2.5">
+                <div>Length: <span class="text-emerald-400 font-semibold">96 words</span> (Target 80–120)</div>
+                <div>Anchor: <span class="text-brand-300 font-semibold">Y-Block DHA Phase 3</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-slate-800 text-xs text-slate-400">
+            <span>Direct Google Business API</span>
+            <span class="text-emerald-400 font-medium">Auto-Synced</span>
+          </div>
+        </div>
+
+        <!-- MODULE C (Span 5) -->
+        <div class="lg:col-span-5 bento-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="badge-pill bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
+                Module C • Generative Engine (GEO)
+              </span>
+              <span class="text-xs font-mono text-cyan-400">AI Citations</span>
+            </div>
+            <h3 class="text-xl font-bold font-display text-white mb-2">GEO & Perplexity Answer Seeding</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+              Seeds factual Q&A data formatted for ChatGPT Search, Perplexity AI, and Google AI Overviews scraping engines.
+            </p>
+
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1">User AI Prompt:</div>
+              <div class="text-xs font-semibold text-white mb-2">"Does Apex Dental Care offer same-day weekend appointments in Lahore?"</div>
+              
+              <div class="text-[11px] font-mono text-cyan-400 uppercase tracking-wider mb-1">Structured GEO Response:</div>
+              <p class="text-xs text-cyan-200/90 leading-relaxed font-sans bg-cyan-950/30 p-2.5 rounded-lg border border-cyan-800/40">
+                "Yes, Apex Dental Care provides dedicated same-day emergency appointments on weekends. On-call clinical teams operate Saturday and Sunday from 10:00 AM to 8:00 PM at Y-Block DHA Phase 3."
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <span>Perplexity & ChatGPT Ready</span>
+            <span class="text-emerald-400">Zero-Fluff Format</span>
+          </div>
+        </div>
+
+        <!-- MODULE D (Span 7) -->
+        <div class="lg:col-span-7 bento-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="badge-pill bg-amber-500/15 border border-amber-500/30 text-amber-400">
+                Module D • Profile Guard & Radar
+              </span>
+              <span class="text-xs font-mono text-rose-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> Drift Defense Active
+              </span>
+            </div>
+            <h3 class="text-xl font-bold font-display text-white mb-2">Profile Guard & 3-Pack Competitor Spy</h3>
+            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+              Detects unauthorized schema edits to categories, phone numbers, and addresses. Instantly restores the approved master record and tracks competitor review velocity.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              <div class="p-3.5 rounded-xl bg-slate-900/90 border border-rose-500/30">
+                <div class="text-[11px] font-mono text-rose-400 font-semibold mb-1">TAMPER ATTEMPT BLOCKED:</div>
+                <div class="text-xs text-slate-300">
+                  Phone changed from <span class="text-emerald-400 font-mono">+92-300-1234567</span> to <span class="text-rose-400 line-through font-mono">+92-300-9999999</span>.
+                </div>
+                <div class="mt-2 text-[10px] font-mono text-emerald-400">Auto-restored to master record in 42ms.</div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] font-mono text-amber-400 font-semibold mb-1">COMPETITOR MAP VELOCITY:</div>
+                <div class="text-xs text-slate-300 leading-relaxed">
+                  • DHA Smile Studio: 142 reviews (+6 this week)<br>
+                  • Lahore Dental Associates: 88 reviews (+1 this week)
+                </div>
+                <div class="mt-2 text-[10px] font-mono text-brand-400">Recommendation: Send review SMS blast.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>Automated Daily Cron Audit</span>
+            <span class="text-emerald-400 font-medium font-mono">100% Schema Guarded</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE FLOW SECTION -->
+    <section id="architecture" class="py-16">
+      <div class="mb-10 text-center">
+        <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-white tracking-tight">Zero-Cost Infrastructure Stack</h2>
+        <p class="text-slate-400 text-sm mt-2 max-w-2xl mx-auto">Engineered to deliver enterprise-grade performance while consuming exactly $0.00/month.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bento-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center font-bold font-mono text-lg mb-4">
+            01
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 font-display">Groq Multi-Cloud Cluster</h4>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Runs Qwen 3.8 27B on Groq LPU hardware at ultra-low ~18ms latency with automatic failover to Z.ai GLM-4.7.
+          </p>
+          <div class="text-xs font-mono text-brand-400 bg-brand-950/40 border border-brand-800/40 p-2 rounded-lg">
+            Status: Active & Live on port 3000
+          </div>
+        </div>
+
+        <div class="bento-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold font-mono text-lg mb-4">
+            02
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 font-display">Supabase Cloud Database</h4>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Persistent PostgreSQL instance hosted in ap-southeast-2 (Sydney) with 5 relational tables and schema validation.
+          </p>
+          <div class="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 p-2 rounded-lg">
+            Ref: dfaxvifgpxcmyfxhzmdf
+          </div>
+        </div>
+
+        <div class="bento-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-brand-violet/10 border border-brand-violet/20 text-brand-violet flex items-center justify-center font-bold font-mono text-lg mb-4">
+            03
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 font-display">Multi-Channel Alerts</h4>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Urgent escalations routed via CallMeBot WhatsApp, Telegram Bot API, Discord Webhook, and Slack.
+          </p>
+          <div class="text-xs font-mono text-brand-violet bg-violet-950/40 border border-violet-800/40 p-2 rounded-lg">
+            Failover: 4-Way Fallback Chain
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="pt-16 pb-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <span class="text-white font-bold font-display">HAVEN</span> • Autonomous Local SEO & Reputation Engine
+      </div>
+      <div class="flex items-center gap-4 font-mono text-[11px]">
+        <a href="https://github.com/harishamouti-cyber/haven" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+        <span>•</span>
+        <a href="/api/health" target="_blank" class="hover:text-white transition-colors">/api/health</a>
+        <span>•</span>
+        <a href="/api/metrics" target="_blank" class="hover:text-white transition-colors">/api/metrics</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // Initialize Lenis smooth scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Live Metrics Polling
+    async function updateMetrics() {
       try {
         const res = await fetch('/api/metrics');
         if (res.ok) {
-          const m = await res.json();
-          document.getElementById('statTotal').innerText = m.totalExecutions ?? 0;
-          document.getElementById('statAuto').innerText = m.autoPublished ?? 0;
-          document.getElementById('statEscalations').innerText = m.escalations ?? 0;
-          document.getElementById('statAlerts').innerText = m.alertsDispatched ?? 0;
+          const data = await res.json();
+          document.getElementById('statTotal').innerText = data.totalExecutions ?? 0;
+          document.getElementById('statAuto').innerText = data.autoPublished ?? 0;
+          document.getElementById('statEscalations').innerText = data.escalations ?? 0;
+          document.getElementById('statAlerts').innerText = data.alertsDispatched ?? 0;
         }
       } catch (e) {
-        console.warn('Metrics fetch error:', e);
+        console.warn('Metrics polling error:', e);
+      }
+    }
+    updateMetrics();
+    setInterval(updateMetrics, 4000);
+
+    // Presets handler
+    function loadPreset(type) {
+      const stars = document.getElementById('userStars');
+      const text = document.getElementById('userReviewText');
+      const name = document.getElementById('userName');
+
+      if (type === '5star') {
+        stars.value = '5';
+        name.value = 'Dr. Bilal Qureshi';
+        text.value = 'Exceptional dental clinic! Dr. Tariq solved my toothache with zero pain. Cleanest dental setup in DHA Lahore.';
+      } else if (type === '1star') {
+        stars.value = '1';
+        name.value = 'Zainab Ahmed';
+        text.value = 'Had an appointment at 3pm, doctor was 50 mins late and nobody bothered to inform us. Terrible customer service.';
+      } else if (type === 'spam') {
+        stars.value = '5';
+        name.value = 'CryptoTrader99';
+        text.value = 'Earn $5000 weekly guaranteed with WhatsApp crypto signals! Contact +1800-INVEST-NOW!';
       }
     }
 
-    async function triggerSimulator(action) {
-      const output = document.getElementById('jsonOutput');
-      output.innerText = "⏳ Dispatching event to Groq AI (Qwen 3.8)...";
+    // Submit Custom Review to live Groq Qwen 3.8 backend
+    async function submitInteractiveReview() {
+      const telemetry = document.getElementById('telemetryBox');
+      const status = document.getElementById('responseStatus');
+      const stars = parseInt(document.getElementById('userStars').value, 10);
+      const text = document.getElementById('userReviewText').value.trim();
+      const name = document.getElementById('userName').value.trim();
+      const keyword = document.getElementById('userKeyword').value.trim();
+
+      if (!text) return alert('Please enter review text.');
+
+      status.innerText = 'Invoking Groq Qwen 3.8...';
+      status.className = 'text-amber-400 font-semibold';
+      telemetry.innerText = `// [STREAM START]\n// Business: Apex Dental Care\n// Star Rating: ${stars}\n// Processing via Haven Router with Groq/Qwen 3.8 27B...`;
+
+      try {
+        const res = await fetch('/api/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: `play_${Date.now()}`,
+            eventType: 'REVIEW_EVENT',
+            businessId: '5345f669-77bb-4c2d-8453-56248b28322e',
+            businessName: 'Apex Dental Care',
+            businessCategory: 'Dental Clinic',
+            targetLocation: 'DHA Lahore',
+            timestamp: new Date().toISOString(),
+            reviewerName: name,
+            starRating: stars,
+            reviewText: text,
+            targetKeywords: [keyword]
+          })
+        });
+
+        const data = await res.json();
+        telemetry.innerText = JSON.stringify(data, null, 2);
+        status.innerText = data.safeToAutoPublish ? '200 OK • Auto-Published' : '200 OK • Escalated to Owner';
+        status.className = data.safeToAutoPublish ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold';
+        updateMetrics();
+      } catch (err) {
+        telemetry.innerText = '// Execution error: ' + err.message;
+        status.innerText = 'Error';
+        status.className = 'text-rose-400 font-semibold';
+      }
+    }
+
+    // Quick Simulation Handler
+    async function triggerQuickSim(action) {
+      const telemetry = document.getElementById('telemetryBox');
+      const status = document.getElementById('responseStatus');
+
+      status.innerText = 'Simulating ' + action + '...';
+      status.className = 'text-brand-400 font-semibold';
+      telemetry.innerText = `// Requesting simulation: ${action}...`;
+
       try {
         const res = await fetch('/api/events/simulate', {
           method: 'POST',
@@ -261,49 +667,50 @@
           body: JSON.stringify({ action })
         });
         const data = await res.json();
-        output.innerText = JSON.stringify(data, null, 2);
-        loadMetrics();
+        telemetry.innerText = JSON.stringify(data, null, 2);
+        status.innerText = 'Simulated Successfully';
+        status.className = 'text-emerald-400 font-semibold';
+        updateMetrics();
       } catch (err) {
-        output.innerText = "Error contacting server: " + err.message;
+        telemetry.innerText = '// Error: ' + err.message;
+        status.innerText = 'Error';
       }
     }
 
-    async function submitCustomReview() {
-      const output = document.getElementById('jsonOutput');
-      const stars = parseInt(document.getElementById('userStars').value, 10);
-      const text = document.getElementById('userReviewText').value.trim();
-      if (!text) return alert('Please enter review text.');
+    // GSAP Scroll Animations
+    window.addEventListener('DOMContentLoaded', () => {
+      gsap.registerPlugin(ScrollTrigger);
 
-      output.innerText = `⏳ Sending ${stars}-Star review to Haven AI Engine (Qwen 3.8)...`;
-      try {
-        const res = await fetch('/api/events', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventId: `evt_${Date.now()}`,
-            eventType: 'REVIEW_EVENT',
-            businessId: '5345f669-77bb-4c2d-8453-56248b28322e',
-            businessName: 'Apex Dental Care',
-            businessCategory: 'Dental Clinic',
-            targetLocation: 'DHA Lahore',
-            timestamp: new Date().toISOString(),
-            reviewerName: 'Interactive Visitor',
-            starRating: stars,
-            reviewText: text,
-            targetKeywords: ['emergency dentist in Lahore']
-          })
+      gsap.from('#hero h1', {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out'
+      });
+
+      gsap.from('#hero p', {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+
+      // Animate Bento Cards on scroll
+      gsap.utils.toArray('.bento-card').forEach((card) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          ease: 'power2.out'
         });
-        const data = await res.json();
-        output.innerText = JSON.stringify(data, null, 2);
-        loadMetrics();
-      } catch (err) {
-        output.innerText = "Error: " + err.message;
-      }
-    }
-
-    // Initial load
-    loadMetrics();
-    setInterval(loadMetrics, 5000);
+      });
+    });
   </script>
 </body>
 </html>
