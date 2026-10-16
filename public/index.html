@@ -13,10 +13,8 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- GSAP & ScrollTrigger & Lenis -->
+  <!-- GSAP Core (for fast UI transitions) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -554,17 +552,7 @@
 
   <!-- Interactive JavaScript Engine -->
   <script>
-    // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smooth: true
-    });
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // Native smooth scroll active (scrollytelling removed)
 
     // Live Metrics Polling
     async function updateMetrics() {
@@ -677,39 +665,12 @@
       }
     }
 
-    // GSAP Scroll Animations
+    // Immediate render with zero scroll delays (Scrollytelling removed)
     window.addEventListener('DOMContentLoaded', () => {
-      gsap.registerPlugin(ScrollTrigger);
-
-      gsap.from('#hero h1', {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        ease: 'power3.out'
-      });
-
-      gsap.from('#hero p', {
-        opacity: 0,
-        y: 20,
-        duration: 1,
-        delay: 0.2,
-        ease: 'power3.out'
-      });
-
-      // Animate Bento Cards on scroll
-      gsap.utils.toArray('.bento-card').forEach((card) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 0,
-          y: 40,
-          duration: 0.8,
-          ease: 'power2.out'
-        });
-      });
+      // Fast subtle entrance for hero only
+      if (typeof gsap !== 'undefined') {
+        gsap.from('#hero', { opacity: 0, y: 15, duration: 0.5, ease: 'power2.out' });
+      }
     });
   </script>
 </body>
